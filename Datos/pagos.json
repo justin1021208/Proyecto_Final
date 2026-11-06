@@ -1,0 +1,38 @@
+[
+  {
+    "cliente": "Justin Leandro Ruiz Madrigal",
+    "plan_id": "diario",
+    "plan": "Pase diario",
+    "monto": 60,
+    "metodo": "Efectivo",
+    "fecha": "2026-11-05",
+    "vence": "2026-11-05"
+  },
+  {
+    "cliente": "Justin Leandro Ruiz Madrigal",
+    "plan_id": "semanal",
+    "plan": "Semanal",
+    "monto": 300,
+    "metodo": "Efectivo",
+    "fecha": "2026-11-05",
+    "vence": "2026-11-12"
+  },
+  {
+    "cliente": "Justin Leandro Ruiz Madrigal",
+    "plan_id": "mensual",
+    "plan": "Mensual",
+    "monto": 900,
+    "metodo": "Efectivo",
+    "fecha": "2026-11-05",
+    "vence": "2026-12-12"
+  },
+  {
+    "cliente": "Justin Leandro Ruiz Madrigal",
+    "plan_id": "trimestral",
+    "plan": "Trimestral",
+    "monto": 2400,
+    "metodo": "Tarjeta",
+    "fecha": "2026-11-05",
+    "vence": "2027-03-12"
+  }
+]
