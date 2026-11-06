@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<header class="mb-8">
+    <h1 class="font-display text-4xl font-extrabold">Clientes</h1>
+    <p class="texto-suave mt-3">Registra a quien entrena contigo y revisa el estado de su membresía.</p>
+</header>
+
+<div class="grid grid-cols-1 lg:grid-cols-[20rem_1fr] gap-6 items-start">
+
+    <section class="panel p-6 lg:sticky lg:top-28">
+        <h2 class="font-display text-xl font-bold mb-5">Nuevo cliente</h2>
+
+        <form method="post" action="{{ url_for('clientes') }}" class="space-y-4">
+            <div>
+                <label for="nombre" class="block text-sm texto-suave mb-1.5">Nombre completo</label>
+                <input id="nombre" type="text" name="nombre" required autocomplete="off"
+                       placeholder="Ej. María Gómez" class="campo w-full px-4 py-3">
+            </div>
+            <div>
+                <label for="telefono" class="block text-sm texto-suave mb-1.5">Teléfono</label>
+                <input id="telefono" type="tel" name="telefono" required autocomplete="off"
+                       placeholder="Ej. 8888 0000" class="campo w-full px-4 py-3">
+            </div>
+            <button type="submit" class="btn-grad w-full px-5 py-3 rounded-full font-semibold">Guardar cliente</button>
+        </form>
+    </section>
+
+    <section class="panel p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <h2 class="font-display text-xl font-bold">
+                Clientes registrados
+                <span class="texto-suave font-normal text-base">({{ clientes|length }})</span>
+            </h2>
+            {% if clientes %}
+                <input id="buscar" type="search" placeholder="Buscar por nombre o teléfono"
+                       aria-label="Buscar cliente" class="campo px-4 py-2 text-sm w-full sm:w-64">
+            {% endif %}
+        </div>
+
+        {% if clientes %}
+            <ul id="lista" class="divide-y divide-white/10">
+                {% for c in clientes %}
+                    {% set partes = c.nombre.split() %}
+                    <li data-buscar="{{ (c.nombre ~ ' ' ~ c.telefono)|lower }}" class="flex items-center gap-4 py-3">
+                        <span class="avatar av-{{ (loop.index0 % 3) + 1 }}" aria-hidden="true">
+                            {% if partes %}{{ (partes[0][0] ~ (partes[1][0] if partes|length > 1 else ''))|upper }}{% endif %}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-semibold truncate">{{ c.nombre }}</p>
+                            <p class="text-sm texto-suave whitespace-nowrap">{{ c.telefono }}</p>
+                            <div class="sm:hidden mt-1.5">
+                                <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
+                            </div>
+                        </div>
+                        <div class="hidden sm:block">
+                            <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
+                        </div>
+                        <a href="{{ url_for('pagos', cliente=c.nombre) }}" class="enlace text-sm flex-none">Cobrar</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <p id="sin-resultados" class="texto-suave hidden py-4">Ningún cliente coincide con la búsqueda.</p>
+        {% else %}
+            <p class="texto-suave">Aún no hay clientes. Registra el primero con el formulario.</p>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        const caja = document.getElementById('buscar');
+        if (!caja) return;
+        const filas = Array.from(document.querySelectorAll('#lista li'));
+        const vacio = document.getElementById('sin-resultados');
+
+        caja.addEventListener('input', function () {
+            const texto = caja.value.trim().toLowerCase();
+            let visibles = 0;
+            filas.forEach(function (fila) {
+                const coincide = fila.dataset.buscar.includes(texto);
+                fila.classList.toggle('hidden', !coincide);
+                if (coincide) visibles++;
+            });
+            vacio.classList.toggle('hidden', visibles > 0);
+        });
+    })();
+</script>
+{% endblock %}

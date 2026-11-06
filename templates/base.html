@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inicio{% endblock %} · GymControl</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --fondo: #0c0a1d;
+            --superficie: #110e25;
+            --linea: rgba(255, 255, 255, .09);
+            --suave: #a7a3d0;
+            --violeta: #8b7bff;
+            --grad: linear-gradient(135deg, #6d5dfc 0%, #3f8cff 100%);
+        }
+
+        html { background: var(--fondo); }
+
+        body {
+            font-family: 'Figtree', system-ui, sans-serif;
+            color: #ece9ff;
+            min-height: 100vh;
+            background:
+                radial-gradient(52rem 34rem at 88% -8%, rgba(124, 92, 255, .22), transparent 62%),
+                radial-gradient(46rem 32rem at -8% 6%, rgba(63, 140, 255, .15), transparent 62%),
+                var(--fondo);
+            background-attachment: fixed;
+        }
+
+        .font-display { font-family: 'Bricolage Grotesque', 'Figtree', sans-serif; letter-spacing: -.02em; }
+        .texto-suave { color: var(--suave); }
+
+        /* ---------- Superficies y campos ---------- */
+        .panel {
+            background: rgba(255, 255, 255, .035);
+            border: 1px solid var(--linea);
+            border-radius: 1.25rem;
+        }
+
+        .campo {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--linea);
+            border-radius: .75rem;
+            color: inherit;
+        }
+        .campo::placeholder { color: #7f7bab; }
+        .campo:focus-visible { outline: 2px solid var(--violeta); outline-offset: 1px; border-color: transparent; }
+
+        /* ---------- Botones ---------- */
+        .btn-grad {
+            background: var(--grad);
+            color: #fff;
+            box-shadow: 0 10px 26px -10px rgba(109, 93, 252, .75);
+            transition: transform .15s, filter .15s;
+        }
+        .btn-grad:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-grad:disabled { opacity: .4; cursor: not-allowed; filter: none; transform: none; }
+        .btn-grad:focus-visible, .btn-ghost:focus-visible { outline: 2px solid #b8adff; outline-offset: 3px; }
+
+        .btn-ghost {
+            border: 1px solid var(--linea);
+            color: #ece9ff;
+            transition: background .15s, border-color .15s;
+        }
+        .btn-ghost:hover { background: rgba(255, 255, 255, .06); border-color: rgba(139, 123, 255, .5); }
+
+        .enlace { color: #b3a8ff; font-weight: 600; }
+        .enlace:hover { text-decoration: underline; }
+
+        /* ---------- Pestañas con indicador deslizante ---------- */
+        .tabs {
+            position: relative;
+            display: flex;
+            gap: 2px;
+            padding: 4px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--linea);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+
+        .tab {
+            position: relative;
+            z-index: 1;
+            padding: .5rem 1.05rem;
+            border-radius: 999px;
+            color: var(--suave);
+            font-size: .92rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: color .2s;
+        }
+        .tab:hover, .tab[aria-current="page"] { color: #fff; }
+        .tab:focus-visible { outline: 2px solid #b8adff; outline-offset: -2px; }
+
+        #tab-pill {
+            position: absolute;
+            top: 4px; bottom: 4px; left: 0;
+            width: 0;
+            border-radius: 999px;
+            background: var(--grad);
+            box-shadow: 0 6px 20px -6px rgba(109, 93, 252, .8);
+            opacity: 0;
+            z-index: 0;
+            transition: transform .38s cubic-bezier(.34, 1.4, .5, 1),
+                        width .38s cubic-bezier(.34, 1.4, .5, 1),
+                        opacity .2s;
+        }
+
+        /* ---------- Insignias de estado ---------- */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: .2rem .7rem;
+            border-radius: 999px;
+            font-size: .78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-ok      { background: rgba(52, 211, 153, .12);  color: #6ee7b7; }
+        .badge-warn    { background: rgba(251, 191, 36, .13);  color: #fcd34d; }
+        .badge-off     { background: rgba(251, 113, 133, .13); color: #fda4af; }
+        .badge-none    { background: rgba(255, 255, 255, .07); color: var(--suave); }
+        .badge-cliente { background: rgba(63, 140, 255, .15);  color: #8fc0ff; }
+        .badge-pago    { background: rgba(139, 123, 255, .17); color: #c4bbff; }
+
+        /* ---------- Avisos ---------- */
+        .aviso {
+            border: 1px solid;
+            border-radius: .9rem;
+            padding: .8rem 1.1rem;
+            font-size: .95rem;
+            transition: opacity .4s;
+        }
+        .aviso-ok, .aviso-message { background: rgba(52, 211, 153, .10); border-color: rgba(52, 211, 153, .35); color: #86efac; }
+        .aviso-error { background: rgba(251, 113, 133, .10); border-color: rgba(251, 113, 133, .35); color: #fda4af; }
+
+        /* ---------- Opciones tipo ficha (plan / método) ---------- */
+        .opcion { position: relative; display: block; cursor: pointer; }
+        .opcion-caja {
+            border: 1px solid var(--linea);
+            background: rgba(255, 255, 255, .04);
+            border-radius: .9rem;
+            transition: border-color .15s, background .15s;
+        }
+        .opcion:hover .opcion-caja { border-color: rgba(139, 123, 255, .5); }
+        .opcion input:checked + .opcion-caja { border-color: var(--violeta); background: rgba(124, 92, 255, .17); }
+        .opcion input:focus-visible + .opcion-caja { outline: 2px solid #b8adff; outline-offset: 2px; }
+
+        /* ---------- Avatares ---------- */
+        .avatar {
+            display: grid;
+            place-items: center;
+            flex: none;
+            width: 2.6rem; height: 2.6rem;
+            border-radius: .85rem;
+            font-weight: 700;
+            font-size: .9rem;
+            color: #fff;
+        }
+        .av-1 { background: linear-gradient(135deg, #3f8cff, #4f6df5); }
+        .av-2 { background: linear-gradient(135deg, #5f63f6, #7c5cff); }
+        .av-3 { background: linear-gradient(135deg, #7c5cff, #a35cf0); }
+
+        /* ---------- Franja de cifras ---------- */
+        .cifras {
+            display: grid;
+            gap: 1px;
+            background: var(--linea);
+            border: 1px solid var(--linea);
+            border-radius: 1.25rem;
+            overflow: hidden;
+        }
+        .cifra { background: var(--superficie); }
+
+        /* ---------- Pases de membresía ---------- */
+        .pase {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            border: 1px solid var(--linea);
+            background: var(--superficie);
+        }
+        .pase::before {
+            content: "";
+            position: absolute;
+            top: 14px; left: 50%;
+            width: 46px; height: 9px;
+            transform: translateX(-50%);
+            border-radius: 999px;
+            background: var(--fondo);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, .7);
+            z-index: 1;
+        }
+        .pase-cabeza { background: var(--g); color: #fff; }
+        .pase-1 { --g: linear-gradient(160deg, #2f6fe0, #3d63e8); }
+        .pase-2 { --g: linear-gradient(160deg, #4559e6, #6552e8); }
+        .pase-3 { --g: linear-gradient(160deg, #6a4ee6, #8444e0); }
+        .pase-4 { --g: linear-gradient(160deg, #7a3bdb, #9a3fd4); }
+
+        @media (prefers-reduced-motion: reduce) {
+            #tab-pill, .btn-grad, .btn-ghost, .aviso { transition: none; }
+            .btn-grad:hover { transform: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="sticky top-0 z-20 border-b backdrop-blur-md" style="background: rgba(12, 10, 29, .72); border-color: var(--linea);">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+            <a href="{{ url_for('inicio') }}" class="flex items-center gap-3 w-fit">
+                <span class="grid place-items-center w-10 h-10 rounded-xl" style="background: var(--grad);">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>
+                    </svg>
+                </span>
+                <span class="font-display text-2xl font-extrabold">GymControl</span>
+            </a>
+
+            <nav id="tabs" class="tabs" aria-label="Secciones">
+                <span id="tab-pill" aria-hidden="true"></span>
+                {% set secciones = [
+                    ('inicio', 'Inicio'),
+                    ('clientes', 'Clientes'),
+                    ('pagos', 'Pagos'),
+                    ('membresias', 'Membresías'),
+                    ('historial', 'Historial'),
+                ] %}
+                {% for endpoint, nombre in secciones %}
+                    <a href="{{ url_for(endpoint) }}"
+                       class="tab"
+                       {% if request.endpoint == endpoint %}aria-current="page"{% endif %}>{{ nombre }}</a>
+                {% endfor %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-8 py-10">
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                <div class="space-y-3 mb-8">
+                    {% for categoria, texto in mensajes %}
+                        <div role="status" data-aviso class="aviso aviso-{{ categoria }}">{{ texto }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Indicador deslizante de las pestañas
+        (function () {
+            const nav = document.getElementById('tabs');
+            const pill = document.getElementById('tab-pill');
+            const enlaces = Array.from(nav.querySelectorAll('.tab'));
+            const activo = nav.querySelector('[aria-current="page"]');
+
+            function mover(el, animar) {
+                if (!el) { pill.style.opacity = 0; return; }
+                pill.style.transition = animar === false ? 'none' : '';
+                pill.style.width = el.offsetWidth + 'px';
+                pill.style.transform = 'translateX(' + el.offsetLeft + 'px)';
+                pill.style.opacity = 1;
+            }
+
+            mover(activo, false);
+            enlaces.forEach(function (a) {
+                a.addEventListener('mouseenter', function () { mover(a); });
+                a.addEventListener('focus', function () { mover(a); });
+            });
+            nav.addEventListener('mouseleave', function () { mover(activo); });
+            nav.addEventListener('focusout', function () { mover(activo); });
+            window.addEventListener('resize', function () { mover(activo, false); });
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(function () { mover(activo, false); });
+            }
+            if (activo && activo.scrollIntoView) {
+                activo.scrollIntoView({ inline: 'center', block: 'nearest' });
+            }
+        })();
+
+        // Los avisos se ocultan solos
+        document.querySelectorAll('[data-aviso]').forEach(function (aviso) {
+            setTimeout(function () {
+                aviso.style.opacity = 0;
+                setTimeout(function () { aviso.remove(); }, 450);
+            }, 5000);
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

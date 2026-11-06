@@ -1,0 +1,22 @@
+[
+  {
+    "tipo": "pago",
+    "detalle": "Justin Leandro Ruiz Madrigal pagó Pase diario (C$ 60)",
+    "fecha": "05/11/2026 20:28"
+  },
+  {
+    "tipo": "pago",
+    "detalle": "Justin Leandro Ruiz Madrigal pagó Semanal (C$ 300)",
+    "fecha": "05/11/2026 20:31"
+  },
+  {
+    "tipo": "pago",
+    "detalle": "Justin Leandro Ruiz Madrigal pagó Mensual (C$ 900)",
+    "fecha": "05/11/2026 20:31"
+  },
+  {
+    "tipo": "pago",
+    "detalle": "Justin Leandro Ruiz Madrigal pagó Trimestral (C$ 2,400)",
+    "fecha": "05/11/2026 20:36"
+  }
+]

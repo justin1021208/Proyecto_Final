@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<section class="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <div>
+        <h1 class="font-display text-4xl md:text-5xl font-extrabold">{{ saludo }}</h1>
+        <p class="texto-suave mt-3">Hoy es {{ fecha_larga }}.</p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+        <a href="{{ url_for('clientes') }}" class="btn-ghost px-5 py-3 rounded-full font-semibold">Registrar cliente</a>
+        <a href="{{ url_for('pagos') }}" class="btn-grad px-5 py-3 rounded-full font-semibold">Registrar pago</a>
+    </div>
+</section>
+
+<section class="cifras grid-cols-2 md:grid-cols-4 mb-10" aria-label="Resumen">
+    <div class="cifra px-6 py-6">
+        <p class="font-display text-4xl font-bold">{{ total }}</p>
+        <p class="texto-suave text-sm mt-1">Clientes registrados</p>
+    </div>
+    <div class="cifra px-6 py-6">
+        <p class="font-display text-4xl font-bold">{{ activas }}</p>
+        <p class="texto-suave text-sm mt-1">Membresías activas</p>
+    </div>
+    <div class="cifra px-6 py-6">
+        <p class="font-display text-4xl font-bold" {% if por_vencer %}style="color:#fcd34d"{% endif %}>{{ por_vencer|length }}</p>
+        <p class="texto-suave text-sm mt-1">Vencen en 7 días o menos</p>
+    </div>
+    <div class="cifra px-6 py-6">
+        <p class="font-display text-4xl font-bold">{{ ingresos|cordobas }}</p>
+        <p class="texto-suave text-sm mt-1">Ingresos de este mes</p>
+    </div>
+</section>
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+    <section class="panel p-6 lg:col-span-3">
+        <h2 class="font-display text-xl font-bold mb-4">Por vencer esta semana</h2>
+
+        {% if por_vencer %}
+            <ul class="divide-y divide-white/10">
+                {% for c in por_vencer %}
+                    <li class="flex items-center justify-between gap-4 py-3">
+                        <div class="min-w-0">
+                            <p class="font-semibold truncate">{{ c.nombre }}</p>
+                            <p class="text-sm texto-suave">{{ c.membresia.plan }}</p>
+                        </div>
+                        <div class="flex items-center gap-4 flex-none">
+                            <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
+                            <a href="{{ url_for('pagos', cliente=c.nombre) }}" class="enlace text-sm">Renovar</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="texto-suave">Nadie vence en los próximos 7 días.</p>
+        {% endif %}
+    </section>
+
+    <section class="panel p-6 lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display text-xl font-bold">Últimos movimientos</h2>
+            <a href="{{ url_for('historial') }}" class="enlace text-sm">Ver historial</a>
+        </div>
+
+        {% if movimientos %}
+            <ul class="divide-y divide-white/10">
+                {% for m in movimientos %}
+                    <li class="py-3">
+                        <p class="text-sm">{{ m.detalle }}</p>
+                        <p class="text-xs texto-suave mt-1">{{ m.fecha }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="texto-suave">Todavía no hay movimientos. Registra un cliente o un pago para empezar.</p>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}

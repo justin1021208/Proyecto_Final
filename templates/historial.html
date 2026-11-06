@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Historial{% endblock %}
+
+{% block content %}
+<header class="mb-8">
+    <h1 class="font-display text-4xl font-extrabold">Historial</h1>
+    <p class="texto-suave mt-3">Lo último que pasó aparece arriba.</p>
+</header>
+
+<section class="panel p-6">
+    {% if movimientos %}
+        <ul class="divide-y divide-white/10">
+            {% for m in movimientos %}
+                <li class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-3">
+                    <div class="sm:w-24 flex-none">
+                        <span class="badge badge-{{ m.tipo }}">{{ 'Pago' if m.tipo == 'pago' else 'Cliente' }}</span>
+                    </div>
+                    <p class="flex-1">{{ m.detalle }}</p>
+                    <p class="text-sm texto-suave whitespace-nowrap">{{ m.fecha }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="texto-suave">Todavía no hay movimientos. Se guardan solos cuando registras clientes o pagos.</p>
+    {% endif %}
+</section>
+{% endblock %}
