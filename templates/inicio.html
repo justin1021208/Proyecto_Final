@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GymControl | Panel principal</title>
 
+<<<<<<< Updated upstream
     <!-- Tipografías: Big Shoulders Display (títulos) + Hanken Grotesk (texto) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -283,6 +284,117 @@
         </div>
 
         <div class="lg:col-span-3">
+=======
+{% block content %}
+<header class="mb-10 md:mb-14 max-w-3xl">
+    <h1 class="titulo text-6xl md:text-8xl">
+        {{ saludo }}, bienvenido a GymControl
+    </h1>
+    <p class="text-[#17191c]/70 mt-6 text-lg max-w-md">
+        Hoy es {{ fecha_larga }}. Administra tu gimnasio desde un solo lugar.
+    </p>
+</header>
+
+<!-- CIFRAS -->
+<section class="grid grid-cols-2 md:grid-cols-4 border-y-4 border-[#17191c] mb-10" aria-label="Resumen">
+    <div class="py-5 pr-4">
+        <p class="titulo text-6xl">{{ total }}</p>
+        <p class="text-sm text-[#17191c]/70 mt-2">Clientes registrados</p>
+    </div>
+    <div class="py-5 pr-4 md:border-l-2 md:pl-6 border-[#17191c]/20">
+        <p class="titulo text-6xl">{{ activas }}</p>
+        <p class="text-sm text-[#17191c]/70 mt-2">Membresías activas</p>
+    </div>
+    <div class="py-5 pr-4 md:border-l-2 md:pl-6 border-[#17191c]/20">
+        <p class="titulo text-6xl">{{ por_vencer|length }}</p>
+        <p class="text-sm text-[#17191c]/70 mt-2">Vencen en 7 días o menos</p>
+    </div>
+    <div class="py-5 md:border-l-2 md:pl-6 border-[#17191c]/20">
+        <p class="titulo text-5xl md:text-6xl whitespace-nowrap">{{ ingresos|cordobas }}</p>
+        <p class="text-sm text-[#17191c]/70 mt-2">Ingresos de este mes</p>
+    </div>
+</section>
+
+<!-- ACCESOS: distinto peso visual según uso -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5 mb-14">
+
+    <a href="{{ url_for('clientes') }}"
+       class="mosaico md:col-span-7 md:row-span-2 flex flex-col justify-between min-h-64 bg-[#1b3a8a] text-white p-8 md:p-10 hover:bg-[#12286a] transition-colors">
+        <div>
+            <h2 class="titulo text-5xl md:text-7xl mb-4">Gestión de clientes</h2>
+            <p class="text-white/80 max-w-sm">Registra, consulta y administra clientes.</p>
+        </div>
+        <p class="accion font-semibold mt-10 self-start">Administrar</p>
+    </a>
+
+    <a href="{{ url_for('pagos') }}"
+       class="mosaico md:col-span-5 flex flex-col justify-between min-h-48 bg-[#f2b632] text-[#17191c] p-8 hover:bg-[#17191c] hover:text-[#f2b632] transition-colors">
+        <div>
+            <h2 class="titulo text-4xl md:text-5xl mb-3">Control de pagos</h2>
+            <p class="opacity-80">Registra los pagos realizados por clientes.</p>
+        </div>
+        <p class="accion font-semibold mt-8 self-start">Administrar</p>
+    </a>
+
+    <a href="{{ url_for('membresias') }}"
+       class="mosaico md:col-span-5 flex flex-col justify-between min-h-48 border-2 border-[#17191c] p-8 hover:bg-[#17191c] hover:text-[#e8e9e4] transition-colors">
+        <div>
+            <h2 class="titulo text-4xl md:text-5xl mb-3">Membresías</h2>
+            <p class="opacity-75">Consulta y gestiona planes de membresía.</p>
+        </div>
+        <p class="accion font-semibold mt-8 self-start">Administrar</p>
+    </a>
+
+    <a href="{{ url_for('historial') }}"
+       class="mosaico md:col-span-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-2 border-[#17191c] p-8 hover:bg-[#17191c] hover:text-[#e8e9e4] transition-colors">
+        <div>
+            <h2 class="titulo text-4xl md:text-5xl mb-3">Historial de movimientos</h2>
+            <p class="opacity-75">Revisa los registros anteriores.</p>
+        </div>
+        <p class="accion font-semibold self-start md:self-end">Administrar</p>
+    </a>
+
+</section>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+    <section>
+        <h2 class="titulo text-3xl mb-4">Por vencer esta semana</h2>
+        <div class="border-t-4 border-[#17191c]">
+            {% for c in por_vencer %}
+                <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b-2 border-[#17191c]/15 py-4">
+                    <div>
+                        <p class="font-semibold text-lg">{{ c.nombre }}</p>
+                        <p class="text-sm text-[#17191c]/65">{{ c.membresia.plan }}</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
+                        <a href="{{ url_for('pagos', cliente=c.nombre) }}" class="font-semibold underline underline-offset-4 decoration-2 hover:text-[#1b3a8a]">Renovar</a>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-[#17191c]/60 py-6">Nadie vence en los próximos 7 días.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <div class="flex items-baseline justify-between mb-4">
+            <h2 class="titulo text-3xl">Últimos movimientos</h2>
+            <a href="{{ url_for('historial') }}" class="font-semibold underline underline-offset-4 decoration-2 hover:text-[#1b3a8a]">Ver historial</a>
+        </div>
+        <div class="border-t-4 border-[#17191c]">
+            {% for m in movimientos %}
+                <div class="border-b-2 border-[#17191c]/15 py-4">
+                    <p class="font-medium">{{ m.detalle }}</p>
+                    <p class="text-sm text-[#17191c]/60 tabular-nums mt-1">{{ m.fecha }}</p>
+                </div>
+            {% else %}
+                <p class="text-[#17191c]/60 py-6">Todavía no hay movimientos. Registra un cliente o un pago para empezar.</p>
+            {% endfor %}
+        </div>
+    </section>
+>>>>>>> Stashed changes
 
             <h3 class="titulo text-3xl mb-4">
                 Clientes registrados
