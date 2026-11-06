@@ -3,303 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Inicio{% endblock %} · GymControl</title>
+    <title>{% block title %}Inicio{% endblock %} | GymControl</title>
+
+    <!-- Tipografías: Big Shoulders Display (títulos) + Hanken Grotesk (texto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap" rel="stylesheet">
-
     <style>
+        /*
+          Paleta:
+          azul de cancha  #1b3a8a  (oscuro #12286a)
+          gris concreto   #e8e9e4
+          negro de disco  #17191c
+          cinta amarilla  #f2b632
+        */
         :root {
-            color-scheme: dark;
-            --fondo: #0c0a1d;
-            --superficie: #110e25;
-            --linea: rgba(255, 255, 255, .09);
-            --suave: #a7a3d0;
-            --violeta: #8b7bff;
-            --grad: linear-gradient(135deg, #6d5dfc 0%, #3f8cff 100%);
+            --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+            --font-body: "Hanken Grotesk", system-ui, sans-serif;
+            --cinta: #f2b632;
         }
 
-        html { background: var(--fondo); }
+        body { font-family: var(--font-body); }
 
-        body {
-            font-family: 'Figtree', system-ui, sans-serif;
-            color: #ece9ff;
-            min-height: 100vh;
-            background:
-                radial-gradient(52rem 34rem at 88% -8%, rgba(124, 92, 255, .22), transparent 62%),
-                radial-gradient(46rem 32rem at -8% 6%, rgba(63, 140, 255, .15), transparent 62%),
-                var(--fondo);
-            background-attachment: fixed;
+        .titulo {
+            font-family: var(--font-display);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.01em;
         }
 
-        .font-display { font-family: 'Bricolage Grotesque', 'Figtree', sans-serif; letter-spacing: -.02em; }
-        .texto-suave { color: var(--suave); }
-
-        /* ---------- Superficies y campos ---------- */
-        .panel {
-            background: rgba(255, 255, 255, .035);
-            border: 1px solid var(--linea);
-            border-radius: 1.25rem;
-        }
-
-        .campo {
-            background: rgba(255, 255, 255, .05);
-            border: 1px solid var(--linea);
-            border-radius: .75rem;
-            color: inherit;
-        }
-        .campo::placeholder { color: #7f7bab; }
-        .campo:focus-visible { outline: 2px solid var(--violeta); outline-offset: 1px; border-color: transparent; }
-
-        /* ---------- Botones ---------- */
-        .btn-grad {
-            background: var(--grad);
-            color: #fff;
-            box-shadow: 0 10px 26px -10px rgba(109, 93, 252, .75);
-            transition: transform .15s, filter .15s;
-        }
-        .btn-grad:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        .btn-grad:disabled { opacity: .4; cursor: not-allowed; filter: none; transform: none; }
-        .btn-grad:focus-visible, .btn-ghost:focus-visible { outline: 2px solid #b8adff; outline-offset: 3px; }
-
-        .btn-ghost {
-            border: 1px solid var(--linea);
-            color: #ece9ff;
-            transition: background .15s, border-color .15s;
-        }
-        .btn-ghost:hover { background: rgba(255, 255, 255, .06); border-color: rgba(139, 123, 255, .5); }
-
-        .enlace { color: #b3a8ff; font-weight: 600; }
-        .enlace:hover { text-decoration: underline; }
-
-        /* ---------- Pestañas con indicador deslizante ---------- */
-        .tabs {
-            position: relative;
-            display: flex;
-            gap: 2px;
-            padding: 4px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, .04);
-            border: 1px solid var(--linea);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .tabs::-webkit-scrollbar { display: none; }
-
-        .tab {
-            position: relative;
-            z-index: 1;
-            padding: .5rem 1.05rem;
-            border-radius: 999px;
-            color: var(--suave);
-            font-size: .92rem;
-            font-weight: 500;
-            white-space: nowrap;
-            transition: color .2s;
-        }
-        .tab:hover, .tab[aria-current="page"] { color: #fff; }
-        .tab:focus-visible { outline: 2px solid #b8adff; outline-offset: -2px; }
-
-        #tab-pill {
+        /* Marcas de cancha pintadas en el menú lateral */
+        .marcas-cancha {
             position: absolute;
-            top: 4px; bottom: 4px; left: 0;
-            width: 0;
-            border-radius: 999px;
-            background: var(--grad);
-            box-shadow: 0 6px 20px -6px rgba(109, 93, 252, .8);
-            opacity: 0;
-            z-index: 0;
-            transition: transform .38s cubic-bezier(.34, 1.4, .5, 1),
-                        width .38s cubic-bezier(.34, 1.4, .5, 1),
-                        opacity .2s;
+            pointer-events: none;
+            border: 3px solid rgba(255, 255, 255, 0.22);
+            border-radius: 9999px;
+        }
+        .marcas-cancha.grande { width: 22rem; height: 22rem; right: -11rem; bottom: -6rem; }
+        .marcas-cancha.chica  { width: 9rem;  height: 9rem;  right: -4.5rem; bottom: 0.5rem; }
+
+        /* Foco visible para teclado */
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 3px solid var(--cinta);
+            outline-offset: 3px;
         }
 
-        /* ---------- Insignias de estado ---------- */
+        .mosaico .accion {
+            text-decoration: underline;
+            text-decoration-thickness: 3px;
+            text-underline-offset: 6px;
+            transition: text-underline-offset 0.15s ease;
+        }
+        .mosaico:hover .accion { text-underline-offset: 10px; }
+
+        /* Sellos de estado (sobre fondo claro) */
         .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: .2rem .7rem;
-            border-radius: 999px;
-            font-size: .78rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .badge-ok      { background: rgba(52, 211, 153, .12);  color: #6ee7b7; }
-        .badge-warn    { background: rgba(251, 191, 36, .13);  color: #fcd34d; }
-        .badge-off     { background: rgba(251, 113, 133, .13); color: #fda4af; }
-        .badge-none    { background: rgba(255, 255, 255, .07); color: var(--suave); }
-        .badge-cliente { background: rgba(63, 140, 255, .15);  color: #8fc0ff; }
-        .badge-pago    { background: rgba(139, 123, 255, .17); color: #c4bbff; }
-
-        /* ---------- Avisos ---------- */
-        .aviso {
-            border: 1px solid;
-            border-radius: .9rem;
-            padding: .8rem 1.1rem;
-            font-size: .95rem;
-            transition: opacity .4s;
-        }
-        .aviso-ok, .aviso-message { background: rgba(52, 211, 153, .10); border-color: rgba(52, 211, 153, .35); color: #86efac; }
-        .aviso-error { background: rgba(251, 113, 133, .10); border-color: rgba(251, 113, 133, .35); color: #fda4af; }
-
-        /* ---------- Opciones tipo ficha (plan / método) ---------- */
-        .opcion { position: relative; display: block; cursor: pointer; }
-        .opcion-caja {
-            border: 1px solid var(--linea);
-            background: rgba(255, 255, 255, .04);
-            border-radius: .9rem;
-            transition: border-color .15s, background .15s;
-        }
-        .opcion:hover .opcion-caja { border-color: rgba(139, 123, 255, .5); }
-        .opcion input:checked + .opcion-caja { border-color: var(--violeta); background: rgba(124, 92, 255, .17); }
-        .opcion input:focus-visible + .opcion-caja { outline: 2px solid #b8adff; outline-offset: 2px; }
-
-        /* ---------- Avatares ---------- */
-        .avatar {
-            display: grid;
-            place-items: center;
-            flex: none;
-            width: 2.6rem; height: 2.6rem;
-            border-radius: .85rem;
+            display: inline-block;
+            padding: .15rem .6rem;
+            font-size: .8rem;
             font-weight: 700;
-            font-size: .9rem;
-            color: #fff;
+            white-space: nowrap;
+            border: 2px solid currentColor;
         }
-        .av-1 { background: linear-gradient(135deg, #3f8cff, #4f6df5); }
-        .av-2 { background: linear-gradient(135deg, #5f63f6, #7c5cff); }
-        .av-3 { background: linear-gradient(135deg, #7c5cff, #a35cf0); }
+        .badge-ok      { color: #14633a; }
+        .badge-warn    { background: #f2b632; color: #17191c; border-color: #17191c; }
+        .badge-off     { background: #17191c; color: #e8e9e4; border-color: #17191c; }
+        .badge-none    { color: rgba(23, 25, 28, .6); border-style: dashed; }
+        .badge-cliente { color: #1b3a8a; }
+        .badge-pago    { background: #1b3a8a; color: #fff; border-color: #1b3a8a; }
 
-        /* ---------- Franja de cifras ---------- */
-        .cifras {
-            display: grid;
-            gap: 1px;
-            background: var(--linea);
-            border: 1px solid var(--linea);
-            border-radius: 1.25rem;
-            overflow: hidden;
+        /* Campos sobre el panel negro */
+        .campo-linea {
+            width: 100%;
+            background: transparent;
+            border: 0;
+            border-bottom: 2px solid rgba(232, 233, 228, .4);
+            color: #e8e9e4;
+            padding: .5rem 0;
+            font-size: 1.1rem;
+            outline: none;
+            border-radius: 0;
         }
-        .cifra { background: var(--superficie); }
+        .campo-linea:focus { border-bottom-color: #f2b632; }
+        .campo-linea::placeholder { color: rgba(232, 233, 228, .3); }
+        .campo-linea option { color: #17191c; background: #e8e9e4; }
 
-        /* ---------- Pases de membresía ---------- */
-        .pase {
-            position: relative;
-            overflow: hidden;
-            border-radius: 1.5rem;
-            border: 1px solid var(--linea);
-            background: var(--superficie);
+        /* Fichas de plan y método de pago */
+        .opcion { display: block; cursor: pointer; }
+        .opcion-caja {
+            display: block;
+            border: 2px solid rgba(232, 233, 228, .35);
+            transition: background .15s, color .15s, border-color .15s;
         }
-        .pase::before {
-            content: "";
-            position: absolute;
-            top: 14px; left: 50%;
-            width: 46px; height: 9px;
-            transform: translateX(-50%);
-            border-radius: 999px;
-            background: var(--fondo);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, .7);
-            z-index: 1;
-        }
-        .pase-cabeza { background: var(--g); color: #fff; }
-        .pase-1 { --g: linear-gradient(160deg, #2f6fe0, #3d63e8); }
-        .pase-2 { --g: linear-gradient(160deg, #4559e6, #6552e8); }
-        .pase-3 { --g: linear-gradient(160deg, #6a4ee6, #8444e0); }
-        .pase-4 { --g: linear-gradient(160deg, #7a3bdb, #9a3fd4); }
+        .opcion:hover .opcion-caja { border-color: #e8e9e4; }
+        .opcion input:checked + .opcion-caja { background: #f2b632; color: #17191c; border-color: #f2b632; }
+        .opcion input:focus-visible + .opcion-caja { outline: 3px solid #fff; outline-offset: 2px; }
 
         @media (prefers-reduced-motion: reduce) {
-            #tab-pill, .btn-grad, .btn-ghost, .aviso { transition: none; }
-            .btn-grad:hover { transform: none; }
+            .mosaico .accion, .opcion-caja { transition: none; }
         }
     </style>
 </head>
 
-<body>
+<body class="bg-[#e8e9e4] text-[#17191c] min-h-screen">
 
-    <header class="sticky top-0 z-20 border-b backdrop-blur-md" style="background: rgba(12, 10, 29, .72); border-color: var(--linea);">
-        <div class="max-w-6xl mx-auto px-4 md:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="min-h-screen md:flex">
 
-            <a href="{{ url_for('inicio') }}" class="flex items-center gap-3 w-fit">
-                <span class="grid place-items-center w-10 h-10 rounded-xl" style="background: var(--grad);">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                        <path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>
-                    </svg>
-                </span>
-                <span class="font-display text-2xl font-extrabold">GymControl</span>
+        <!-- MENU LATERAL -->
+        <aside class="relative overflow-hidden w-full md:w-72 md:shrink-0 md:sticky md:top-0 md:h-screen bg-[#1b3a8a] text-white p-6 md:p-8">
+
+            <span class="marcas-cancha grande hidden md:block" aria-hidden="true"></span>
+            <span class="marcas-cancha chica hidden md:block" aria-hidden="true"></span>
+
+            <a href="{{ url_for('inicio') }}" class="relative block mb-6 md:mb-12 w-fit">
+                <span class="titulo text-5xl block">GymControl</span>
+                <span class="text-white/70 mt-2 text-sm block">Panel administrativo</span>
             </a>
 
-            <nav id="tabs" class="tabs" aria-label="Secciones">
-                <span id="tab-pill" aria-hidden="true"></span>
+            <nav class="relative flex md:block overflow-x-auto md:overflow-visible border-t-2 border-white/30" aria-label="Secciones">
                 {% set secciones = [
                     ('inicio', 'Inicio'),
                     ('clientes', 'Clientes'),
-                    ('pagos', 'Pagos'),
+                    ('pagos', 'Registrar pagos'),
                     ('membresias', 'Membresías'),
                     ('historial', 'Historial'),
                 ] %}
                 {% for endpoint, nombre in secciones %}
                     <a href="{{ url_for(endpoint) }}"
-                       class="tab"
-                       {% if request.endpoint == endpoint %}aria-current="page"{% endif %}>{{ nombre }}</a>
+                       {% if request.endpoint == endpoint %}aria-current="page"{% endif %}
+                       class="block shrink-0 border-b-2 border-white/30 px-3 py-4 md:px-4 whitespace-nowrap transition-colors
+                              {% if request.endpoint == endpoint %}bg-[#f2b632] text-[#17191c] font-semibold{% else %}hover:bg-white hover:text-[#12286a]{% endif %}">
+                        {{ nombre }}
+                    </a>
                 {% endfor %}
             </nav>
-        </div>
-    </header>
+        </aside>
 
-    <main class="max-w-6xl mx-auto px-4 md:px-8 py-10">
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 min-w-0 p-6 md:p-12">
 
-        {% with mensajes = get_flashed_messages(with_categories=true) %}
-            {% if mensajes %}
-                <div class="space-y-3 mb-8">
-                    {% for categoria, texto in mensajes %}
-                        <div role="status" data-aviso class="aviso aviso-{{ categoria }}">{{ texto }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    <div class="space-y-3 mb-8 max-w-3xl">
+                        {% for categoria, texto in mensajes %}
+                            <p role="status" data-aviso
+                               class="border-l-8 pl-4 py-3 pr-4 font-medium transition-opacity duration-500
+                                      {% if categoria == 'error' %}border-[#17191c] bg-[#17191c]/10{% else %}border-[#f2b632] bg-[#f2b632]/25{% endif %}">
+                                {{ texto }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
-        {% block content %}{% endblock %}
-    </main>
+            {% block content %}{% endblock %}
+
+            <footer class="mt-14 text-[#17191c]/55 text-sm">
+                GymControl | Sistema de administración
+            </footer>
+        </main>
+
+    </div>
 
     <script>
-        // Indicador deslizante de las pestañas
-        (function () {
-            const nav = document.getElementById('tabs');
-            const pill = document.getElementById('tab-pill');
-            const enlaces = Array.from(nav.querySelectorAll('.tab'));
-            const activo = nav.querySelector('[aria-current="page"]');
-
-            function mover(el, animar) {
-                if (!el) { pill.style.opacity = 0; return; }
-                pill.style.transition = animar === false ? 'none' : '';
-                pill.style.width = el.offsetWidth + 'px';
-                pill.style.transform = 'translateX(' + el.offsetLeft + 'px)';
-                pill.style.opacity = 1;
-            }
-
-            mover(activo, false);
-            enlaces.forEach(function (a) {
-                a.addEventListener('mouseenter', function () { mover(a); });
-                a.addEventListener('focus', function () { mover(a); });
-            });
-            nav.addEventListener('mouseleave', function () { mover(activo); });
-            nav.addEventListener('focusout', function () { mover(activo); });
-            window.addEventListener('resize', function () { mover(activo, false); });
-            if (document.fonts && document.fonts.ready) {
-                document.fonts.ready.then(function () { mover(activo, false); });
-            }
-            if (activo && activo.scrollIntoView) {
-                activo.scrollIntoView({ inline: 'center', block: 'nearest' });
-            }
-        })();
-
         // Los avisos se ocultan solos
         document.querySelectorAll('[data-aviso]').forEach(function (aviso) {
             setTimeout(function () {
                 aviso.style.opacity = 0;
-                setTimeout(function () { aviso.remove(); }, 450);
+                setTimeout(function () { aviso.remove(); }, 550);
             }, 5000);
         });
     </script>

@@ -2,70 +2,64 @@
 {% block title %}Clientes{% endblock %}
 
 {% block content %}
-<header class="mb-8">
-    <h1 class="font-display text-4xl font-extrabold">Clientes</h1>
-    <p class="texto-suave mt-3">Registra a quien entrena contigo y revisa el estado de su membresía.</p>
-</header>
+<h1 class="titulo text-5xl md:text-7xl mb-10">Gestión de clientes</h1>
 
-<div class="grid grid-cols-1 lg:grid-cols-[20rem_1fr] gap-6 items-start">
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
 
-    <section class="panel p-6 lg:sticky lg:top-28">
-        <h2 class="font-display text-xl font-bold mb-5">Nuevo cliente</h2>
+    <div class="lg:col-span-2 bg-[#17191c] text-[#e8e9e4] p-8">
 
-        <form method="post" action="{{ url_for('clientes') }}" class="space-y-4">
+        <h2 class="titulo text-3xl mb-6">Agregar cliente</h2>
+
+        <form action="{{ url_for('clientes') }}" method="POST" class="space-y-6">
             <div>
-                <label for="nombre" class="block text-sm texto-suave mb-1.5">Nombre completo</label>
-                <input id="nombre" type="text" name="nombre" required autocomplete="off"
-                       placeholder="Ej. María Gómez" class="campo w-full px-4 py-3">
+                <label for="campo-nombre" class="block text-sm text-[#e8e9e4]/70 mb-1">Nombre completo</label>
+                <input type="text" name="nombre" id="campo-nombre" required autocomplete="off"
+                       placeholder="Ej. María Gómez" class="campo-linea">
             </div>
+
             <div>
-                <label for="telefono" class="block text-sm texto-suave mb-1.5">Teléfono</label>
-                <input id="telefono" type="tel" name="telefono" required autocomplete="off"
-                       placeholder="Ej. 8888 0000" class="campo w-full px-4 py-3">
+                <label for="campo-telefono" class="block text-sm text-[#e8e9e4]/70 mb-1">Número de teléfono</label>
+                <input type="tel" name="telefono" id="campo-telefono" required autocomplete="off"
+                       placeholder="Ej. 8888 0000" class="campo-linea">
             </div>
-            <button type="submit" class="btn-grad w-full px-5 py-3 rounded-full font-semibold">Guardar cliente</button>
+
+            <button type="submit" class="bg-[#f2b632] text-[#17191c] font-bold px-6 py-3 hover:bg-white transition-colors">
+                Guardar cliente
+            </button>
         </form>
-    </section>
 
-    <section class="panel p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h2 class="font-display text-xl font-bold">
-                Clientes registrados
-                <span class="texto-suave font-normal text-base">({{ clientes|length }})</span>
-            </h2>
+    </div>
+
+    <div class="lg:col-span-3">
+
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
+            <h2 class="titulo text-3xl">Clientes registrados ({{ clientes|length }})</h2>
             {% if clientes %}
-                <input id="buscar" type="search" placeholder="Buscar por nombre o teléfono"
-                       aria-label="Buscar cliente" class="campo px-4 py-2 text-sm w-full sm:w-64">
+                <input id="buscar" type="search" placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente"
+                       class="bg-transparent border-b-2 border-[#17191c] py-1 sm:w-64 outline-none placeholder:text-[#17191c]/45">
             {% endif %}
         </div>
 
-        {% if clientes %}
-            <ul id="lista" class="divide-y divide-white/10">
-                {% for c in clientes %}
-                    {% set partes = c.nombre.split() %}
-                    <li data-buscar="{{ (c.nombre ~ ' ' ~ c.telefono)|lower }}" class="flex items-center gap-4 py-3">
-                        <span class="avatar av-{{ (loop.index0 % 3) + 1 }}" aria-hidden="true">
-                            {% if partes %}{{ (partes[0][0] ~ (partes[1][0] if partes|length > 1 else ''))|upper }}{% endif %}
-                        </span>
-                        <div class="min-w-0 flex-1">
-                            <p class="font-semibold truncate">{{ c.nombre }}</p>
-                            <p class="text-sm texto-suave whitespace-nowrap">{{ c.telefono }}</p>
-                            <div class="sm:hidden mt-1.5">
-                                <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
-                            </div>
-                        </div>
-                        <div class="hidden sm:block">
-                            <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
-                        </div>
-                        <a href="{{ url_for('pagos', cliente=c.nombre) }}" class="enlace text-sm flex-none">Cobrar</a>
-                    </li>
-                {% endfor %}
-            </ul>
-            <p id="sin-resultados" class="texto-suave hidden py-4">Ningún cliente coincide con la búsqueda.</p>
-        {% else %}
-            <p class="texto-suave">Aún no hay clientes. Registra el primero con el formulario.</p>
-        {% endif %}
-    </section>
+        <div id="lista" class="border-t-4 border-[#17191c]">
+            {% for c in clientes %}
+                <div data-buscar="{{ (c.nombre ~ ' ' ~ c.telefono)|lower }}"
+                     class="fila flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b-2 border-[#17191c]/15 py-4">
+                    <div>
+                        <p class="text-lg font-semibold">{{ c.nombre }}</p>
+                        <p class="text-[#17191c]/65 tabular-nums">{{ c.telefono }}</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="badge {{ c.membresia.clase }}">{{ c.membresia.etiqueta }}</span>
+                        <a href="{{ url_for('pagos', cliente=c.nombre) }}" class="font-semibold underline underline-offset-4 decoration-2 hover:text-[#1b3a8a]">Cobrar</a>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-[#17191c]/60 py-6">No hay clientes registrados. Registra el primero con el formulario.</p>
+            {% endfor %}
+            <p id="sin-resultados" class="text-[#17191c]/60 py-6 hidden">Ningún cliente coincide con la búsqueda.</p>
+        </div>
+
+    </div>
 
 </div>
 {% endblock %}
@@ -75,7 +69,7 @@
     (function () {
         const caja = document.getElementById('buscar');
         if (!caja) return;
-        const filas = Array.from(document.querySelectorAll('#lista li'));
+        const filas = Array.from(document.querySelectorAll('#lista .fila'));
         const vacio = document.getElementById('sin-resultados');
 
         caja.addEventListener('input', function () {

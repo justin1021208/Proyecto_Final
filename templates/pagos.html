@@ -2,25 +2,24 @@
 {% block title %}Pagos{% endblock %}
 
 {% block content %}
-<header class="mb-8">
-    <h1 class="font-display text-4xl font-extrabold">Pagos</h1>
-    <p class="texto-suave mt-3">Cada pago extiende la membresía del cliente. Si todavía está activa, el nuevo plan empieza cuando termine el actual.</p>
-</header>
+<h1 class="titulo text-5xl md:text-7xl mb-4">Registrar pagos</h1>
+<p class="text-[#17191c]/70 mb-10 max-w-xl">Cada pago extiende la membresía del cliente. Si todavía está activa, el nuevo plan empieza cuando termine el actual.</p>
 
-<div class="grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-6 items-start">
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
 
-    <section class="panel p-6 lg:sticky lg:top-28">
-        <h2 class="font-display text-xl font-bold mb-5">Registrar pago</h2>
+    <div class="lg:col-span-2 bg-[#17191c] text-[#e8e9e4] p-8">
+
+        <h2 class="titulo text-3xl mb-6">Nuevo pago</h2>
 
         {% if not clientes %}
-            <p class="texto-suave mb-4">Primero necesitas un cliente para poder cobrarle.</p>
-            <a href="{{ url_for('clientes') }}" class="btn-ghost inline-block px-5 py-3 rounded-full font-semibold">Registrar cliente</a>
+            <p class="text-[#e8e9e4]/70 mb-6">Primero necesitas un cliente para poder cobrarle.</p>
+            <a href="{{ url_for('clientes') }}" class="inline-block bg-[#f2b632] text-[#17191c] font-bold px-6 py-3 hover:bg-white transition-colors">Registrar cliente</a>
         {% else %}
-            <form method="post" action="{{ url_for('pagos') }}" class="space-y-5">
+            <form method="post" action="{{ url_for('pagos') }}" class="space-y-7">
 
                 <div>
-                    <label for="cliente" class="block text-sm texto-suave mb-1.5">Cliente</label>
-                    <select id="cliente" name="cliente" required class="campo w-full px-4 py-3">
+                    <label for="cliente" class="block text-sm text-[#e8e9e4]/70 mb-1">Cliente</label>
+                    <select id="cliente" name="cliente" required class="campo-linea">
                         <option value="" disabled {% if not cliente_sel %}selected{% endif %}>Elige un cliente</option>
                         {% for n in clientes %}
                             <option value="{{ n }}" {% if n == cliente_sel %}selected{% endif %}>{{ n }}</option>
@@ -29,16 +28,16 @@
                 </div>
 
                 <fieldset>
-                    <legend class="text-sm texto-suave mb-2">Plan</legend>
+                    <legend class="text-sm text-[#e8e9e4]/70 mb-2">Plan</legend>
                     <div class="grid grid-cols-2 gap-3">
                         {% for id, p in planes.items() %}
                             <label class="opcion">
                                 <input class="sr-only" type="radio" name="plan" value="{{ id }}" required
                                        {% if id == plan_sel %}checked{% endif %}>
-                                <span class="opcion-caja block p-3">
-                                    <span class="block font-semibold">{{ p.nombre }}</span>
-                                    <span class="block text-sm texto-suave">{{ p.dias }} día{{ 's' if p.dias != 1 }}</span>
-                                    <span class="block mt-1 font-display font-bold">{{ p.precio|cordobas }}</span>
+                                <span class="opcion-caja p-3">
+                                    <span class="block font-bold">{{ p.nombre }}</span>
+                                    <span class="block text-sm opacity-75">{{ p.dias }} día{{ 's' if p.dias != 1 }}</span>
+                                    <span class="block mt-1 titulo text-2xl">{{ p.precio|cordobas }}</span>
                                 </span>
                             </label>
                         {% endfor %}
@@ -46,55 +45,60 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend class="text-sm texto-suave mb-2">Método de pago</legend>
+                    <legend class="text-sm text-[#e8e9e4]/70 mb-2">Método de pago</legend>
                     <div class="flex flex-wrap gap-2">
                         {% for m in metodos %}
                             <label class="opcion">
                                 <input class="sr-only" type="radio" name="metodo" value="{{ m }}" required
                                        {% if loop.first %}checked{% endif %}>
-                                <span class="opcion-caja block px-4 py-2 text-sm font-medium">{{ m }}</span>
+                                <span class="opcion-caja px-4 py-2 text-sm font-semibold">{{ m }}</span>
                             </label>
                         {% endfor %}
                     </div>
                 </fieldset>
 
-                <button type="submit" class="btn-grad w-full px-5 py-3 rounded-full font-semibold">Registrar pago</button>
+                <button type="submit" class="bg-[#f2b632] text-[#17191c] font-bold px-6 py-3 hover:bg-white transition-colors">
+                    Registrar pago
+                </button>
             </form>
         {% endif %}
-    </section>
 
-    <section class="panel p-6">
-        <h2 class="font-display text-xl font-bold mb-4">Pagos recientes</h2>
+    </div>
 
-        {% if recientes %}
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="texto-suave">
-                        <tr>
-                            <th class="py-2 pr-4 font-medium">Fecha</th>
-                            <th class="py-2 pr-4 font-medium">Cliente</th>
-                            <th class="py-2 pr-4 font-medium">Plan</th>
-                            <th class="py-2 pr-4 font-medium">Método</th>
-                            <th class="py-2 font-medium text-right">Monto</th>
+    <div class="lg:col-span-3 min-w-0">
+
+        <h2 class="titulo text-3xl mb-4">Pagos recientes</h2>
+
+        <div class="border-t-4 border-[#17191c] overflow-x-auto">
+            {% if recientes %}
+                <table class="w-full text-left">
+                    <thead class="text-sm text-[#17191c]/65">
+                        <tr class="border-b-2 border-[#17191c]/15">
+                            <th class="py-3 pr-4 font-medium">Fecha</th>
+                            <th class="py-3 pr-4 font-medium">Cliente</th>
+                            <th class="py-3 pr-4 font-medium">Plan</th>
+                            <th class="py-3 pr-4 font-medium">Método</th>
+                            <th class="py-3 font-medium text-right">Monto</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-white/10">
+                    <tbody>
                         {% for p in recientes %}
-                            <tr>
-                                <td class="py-3 pr-4 whitespace-nowrap">{{ p.fecha|fecha }}</td>
-                                <td class="py-3 pr-4 font-semibold">{{ p.cliente }}</td>
-                                <td class="py-3 pr-4">{{ p.plan }}</td>
-                                <td class="py-3 pr-4 texto-suave">{{ p.metodo }}</td>
-                                <td class="py-3 text-right font-semibold whitespace-nowrap">{{ p.monto|cordobas }}</td>
+                            <tr class="border-b-2 border-[#17191c]/15">
+                                <td class="py-4 pr-4 whitespace-nowrap tabular-nums">{{ p.fecha|fecha }}</td>
+                                <td class="py-4 pr-4 font-semibold">{{ p.cliente }}</td>
+                                <td class="py-4 pr-4">{{ p.plan }}</td>
+                                <td class="py-4 pr-4 text-[#17191c]/65">{{ p.metodo }}</td>
+                                <td class="py-4 text-right font-bold whitespace-nowrap tabular-nums">{{ p.monto|cordobas }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        {% else %}
-            <p class="texto-suave">Todavía no hay pagos registrados.</p>
-        {% endif %}
-    </section>
+            {% else %}
+                <p class="text-[#17191c]/60 py-6">Todavía no hay pagos registrados.</p>
+            {% endif %}
+        </div>
+
+    </div>
 
 </div>
 {% endblock %}

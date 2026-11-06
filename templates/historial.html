@@ -2,26 +2,20 @@
 {% block title %}Historial{% endblock %}
 
 {% block content %}
-<header class="mb-8">
-    <h1 class="font-display text-4xl font-extrabold">Historial</h1>
-    <p class="texto-suave mt-3">Lo último que pasó aparece arriba.</p>
-</header>
+<h1 class="titulo text-5xl md:text-7xl mb-4">Historial de movimientos</h1>
+<p class="text-[#17191c]/70 mb-10 max-w-xl">Lo último que pasó aparece arriba.</p>
 
-<section class="panel p-6">
-    {% if movimientos %}
-        <ul class="divide-y divide-white/10">
-            {% for m in movimientos %}
-                <li class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-3">
-                    <div class="sm:w-24 flex-none">
-                        <span class="badge badge-{{ m.tipo }}">{{ 'Pago' if m.tipo == 'pago' else 'Cliente' }}</span>
-                    </div>
-                    <p class="flex-1">{{ m.detalle }}</p>
-                    <p class="text-sm texto-suave whitespace-nowrap">{{ m.fecha }}</p>
-                </li>
-            {% endfor %}
-        </ul>
+<div class="border-t-4 border-[#17191c] max-w-4xl">
+    {% for m in movimientos %}
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 border-b-2 border-[#17191c]/15 py-4">
+            <div class="sm:w-24 shrink-0">
+                <span class="badge badge-{{ m.tipo }}">{{ 'Pago' if m.tipo == 'pago' else 'Cliente' }}</span>
+            </div>
+            <p class="flex-1 font-medium">{{ m.detalle }}</p>
+            <p class="text-sm text-[#17191c]/60 whitespace-nowrap tabular-nums">{{ m.fecha }}</p>
+        </div>
     {% else %}
-        <p class="texto-suave">Todavía no hay movimientos. Se guardan solos cuando registras clientes o pagos.</p>
-    {% endif %}
-</section>
+        <p class="text-[#17191c]/60 py-6">Todavía no hay movimientos. Se guardan solos cuando registras clientes o pagos.</p>
+    {% endfor %}
+</div>
 {% endblock %}
